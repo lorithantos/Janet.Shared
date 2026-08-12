@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>Janet.Coalescing</PackageId>
+    <Description>
+      Collapses bursts of change notifications into output passes at a bounded
+      cadence, plus lazy derived cells that compute only when read. No UI
+      dependency: usable from a service or a console app, not only from WPF.
+    </Description>
+    <PackageTags>coalescing;throttle;debounce;mvvm;notification;lazy</PackageTags>
+  </PropertyGroup>
+
+</Project>

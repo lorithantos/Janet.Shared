@@ -1,0 +1,35 @@
+<!-- Layer 2 (dark): identical keys to Semantic.Light.xaml over the dark
+     primitives. Keeping the key set byte-for-byte identical is the skin
+     contract; a key present in one skin and not the other is a bug. -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Primitives.Dark.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Neutral0}" />
+    <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="{StaticResource Neutral50}" />
+    <SolidColorBrush x:Key="SurfaceSunkenBrush" Color="{StaticResource Neutral100}" />
+    <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource Neutral200}" />
+
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource Neutral900}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource Neutral600}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource Neutral400}" />
+
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent500}" />
+    <SolidColorBrush x:Key="AccentStrongBrush" Color="{StaticResource Accent700}" />
+    <SolidColorBrush x:Key="AccentSubtleBrush" Color="{StaticResource Accent300}" Opacity="0.35" />
+
+    <SolidColorBrush x:Key="PositiveMoneyBrush" Color="{StaticResource PositiveRaw}" />
+    <SolidColorBrush x:Key="NegativeMoneyBrush" Color="{StaticResource NegativeRaw}" />
+    <SolidColorBrush x:Key="WarnFaultBrush" Color="{StaticResource WarnRaw}" />
+
+    <SolidColorBrush x:Key="ChartSeries1Brush" Color="{StaticResource Accent500}" />
+    <SolidColorBrush x:Key="ChartSeries2Brush" Color="#B08A64" />
+    <SolidColorBrush x:Key="ChartSeries3Brush" Color="#8493C4" />
+    <SolidColorBrush x:Key="ChartSeries4Brush" Color="#B0A050" />
+    <SolidColorBrush x:Key="ChartBandFillBrush" Color="{StaticResource Accent500}" Opacity="0.18" />
+
+</ResourceDictionary>

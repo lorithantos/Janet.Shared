@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <PackageId>Janet.Wpf</PackageId>
+    <Description>
+      Small WPF pieces that every desktop app rebuilds badly: a three-layer theme
+      with runtime skin swapping, a DataGrid that remembers the user's sort when
+      its ItemsSource is replaced wholesale, crash logging, and the startup
+      hardening that stops WPF exiting silently on an unhandled exception.
+    </Description>
+    <PackageTags>wpf;theming;datagrid;crash-handling;desktop</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Janet.Coalescing\Janet.Coalescing.csproj" />
+  </ItemGroup>
+
+</Project>

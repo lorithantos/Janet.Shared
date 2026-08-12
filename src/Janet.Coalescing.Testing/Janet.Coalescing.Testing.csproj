@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>Janet.Coalescing.Testing</PackageId>
+    <Description>
+      A deterministic test harness for coalescing code: a SynchronizationContext
+      you pump by hand and a TimeProvider you advance by hand, so tests of
+      time-windowed behaviour need no Thread.Sleep and never flake.
+    </Description>
+    <PackageTags>testing;deterministic;timeprovider;synchronizationcontext;coalescing</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Janet.Coalescing\Janet.Coalescing.csproj" />
+  </ItemGroup>
+
+</Project>

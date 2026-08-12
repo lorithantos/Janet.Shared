@@ -1,0 +1,38 @@
+<!-- Layer 2 (light): semantic tokens — the only vocabulary controls and
+     templates may use. A skin is one Semantic.*.xaml (which brings its own
+     primitives); ThemeService swaps it at runtime, so everything here is
+     consumed via DynamicResource. -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Primitives.Light.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Neutral0}" />
+    <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="{StaticResource Neutral50}" />
+    <SolidColorBrush x:Key="SurfaceSunkenBrush" Color="{StaticResource Neutral100}" />
+    <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource Neutral200}" />
+
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource Neutral900}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource Neutral600}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource Neutral400}" />
+
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent500}" />
+    <SolidColorBrush x:Key="AccentStrongBrush" Color="{StaticResource Accent700}" />
+    <SolidColorBrush x:Key="AccentSubtleBrush" Color="{StaticResource Accent300}" Opacity="0.25" />
+
+    <SolidColorBrush x:Key="PositiveMoneyBrush" Color="{StaticResource PositiveRaw}" />
+    <SolidColorBrush x:Key="NegativeMoneyBrush" Color="{StaticResource NegativeRaw}" />
+    <SolidColorBrush x:Key="WarnFaultBrush" Color="{StaticResource WarnRaw}" />
+
+    <!-- Chart tokens live here from day one so LiveCharts theming (via
+         ThemeService) reads the same vocabulary as the XAML. -->
+    <SolidColorBrush x:Key="ChartSeries1Brush" Color="{StaticResource Accent500}" />
+    <SolidColorBrush x:Key="ChartSeries2Brush" Color="#946846" />
+    <SolidColorBrush x:Key="ChartSeries3Brush" Color="#5E6C9B" />
+    <SolidColorBrush x:Key="ChartSeries4Brush" Color="#8A7A2F" />
+    <SolidColorBrush x:Key="ChartBandFillBrush" Color="{StaticResource Accent500}" Opacity="0.12" />
+
+</ResourceDictionary>

@@ -1,0 +1,50 @@
+<!-- Layer 1 (light): raw palette ramps and type/spacing primitives.
+     Nothing outside the Themes folder may reference these keys; controls and
+     templates speak only the semantic layer (Semantic.*.xaml), which is what
+     makes a skin a data swap instead of a restyle. -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Warm neutrals: paper, not laboratory white. -->
+    <Color x:Key="Neutral0">#FBFAF8</Color>
+    <Color x:Key="Neutral50">#F4F2EE</Color>
+    <Color x:Key="Neutral100">#E9E6E0</Color>
+    <Color x:Key="Neutral200">#D6D2CA</Color>
+    <Color x:Key="Neutral400">#9C978D</Color>
+    <Color x:Key="Neutral600">#6B675F</Color>
+    <Color x:Key="Neutral800">#37342F</Color>
+    <Color x:Key="Neutral900">#201E1B</Color>
+
+    <!-- One accent: a deep teal that reads as money-adjacent without being
+         literal green. -->
+    <Color x:Key="Accent300">#7BC4BC</Color>
+    <Color x:Key="Accent500">#1D7A72</Color>
+    <Color x:Key="Accent700">#115E58</Color>
+
+    <Color x:Key="PositiveRaw">#2E7D4F</Color>
+    <Color x:Key="NegativeRaw">#B3403A</Color>
+    <Color x:Key="WarnRaw">#B07C24</Color>
+
+    <FontFamily x:Key="FontBody">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="FontNumeric">Segoe UI Variable Display, Segoe UI</FontFamily>
+
+    <sys:Double x:Key="FontSizeCaption">12</sys:Double>
+    <sys:Double x:Key="FontSizeBody">14</sys:Double>
+    <sys:Double x:Key="FontSizeSubtitle">16</sys:Double>
+    <sys:Double x:Key="FontSizeTitle">22</sys:Double>
+    <sys:Double x:Key="FontSizeHero">40</sys:Double>
+
+    <!-- The 4-px grid, named so a template says Space3, not "12". -->
+    <sys:Double x:Key="Space1">4</sys:Double>
+    <sys:Double x:Key="Space2">8</sys:Double>
+    <sys:Double x:Key="Space3">12</sys:Double>
+    <sys:Double x:Key="Space4">16</sys:Double>
+    <sys:Double x:Key="Space6">24</sys:Double>
+    <sys:Double x:Key="Space8">32</sys:Double>
+
+    <CornerRadius x:Key="RadiusSmall">4</CornerRadius>
+    <CornerRadius x:Key="RadiusMedium">8</CornerRadius>
+
+</ResourceDictionary>
