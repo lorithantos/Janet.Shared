@@ -2,3 +2,13 @@ bin/
 obj/
 .vs/
 *.user
+
+# RazorGraph code graphs. Volatile derived data: a graph is a representation of source
+# this repository already contains, it is wrong the moment anything is edited, and git
+# keeps every stale copy forever. Same category as obj\ -- regenerate, never commit.
+# solution-graph.json is named explicitly because it is RazorGraph.Cli build-solution's
+# default output, so it lands in whatever directory the tool was run from.
+*.graph.json
+solution-graph.json
+graphs/
+.graph/
