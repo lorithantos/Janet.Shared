@@ -195,6 +195,36 @@
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource FontBody}" />
         <Setter Property="FontSize" Value="{DynamicResource FontSizeBody}" />
+
+        <!-- Cells centre their content, so a row reads as one line no matter how
+             tall it gets. WPF's default is Top, which agrees with itself only
+             while every cell is one line high: a templated column that centres
+             its own content (a progress bar, a button strip) already sits lower
+             than the text beside it, and the gap is a couple of pixels until
+             something wraps, at which point one row reads as two half-rows.
+
+             Set here rather than in a consuming app because a grid whose cells
+             do not line up is not any one app's opinion. No BasedOn: there is no
+             implicit DataGridCell style in these dictionaries, and a StaticResource
+             BasedOn naming one that does not exist throws when the BAML loads —
+             which is a startup failure, not a build error. Unset properties fall
+             back to the system theme's template as usual.
+
+             VerticalAlignment, NOT VerticalContentAlignment. The obvious property
+             is the wrong one: WPF's default DataGridCell template hosts a bare
+             ContentPresenter and never template-binds VerticalContentAlignment, so
+             setting it reads back as Center, satisfies a test that asks the object
+             what it thinks, and moves nothing on screen. Aligning the CELL is what
+             stops it stretching to the row's height and taking its content's
+             glyphs to the top with it. -->
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                </Style>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- A read-only quiet grid at ledger density: numeric face, caption size,
