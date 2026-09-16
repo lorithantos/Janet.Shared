@@ -1,13 +1,14 @@
 # Janet.Shared
 
-Two small libraries extracted from apps that had already built them twice.
+Three small libraries extracted from apps that had already built them twice.
 
 | Package | What |
 |---|---|
 | **Janet.Coalescing** | Collapse bursts of change notifications into output passes at a bounded cadence, plus lazy derived cells that compute only when read. No UI dependency. |
 | **Janet.Wpf** | Three-layer theming with runtime skin swapping, a DataGrid that remembers the user's sort, crash logging, and the startup hardening that stops WPF exiting silently. |
+| **Janet.DependencyInjection** | Declare registration on the class itself: what to register, as what, with which lifetime. One assembly scan turns the attributes into descriptors, and a declaration that cannot be honoured throws at startup. |
 
-Both are MIT. Both ship XML docs, because the reasoning is the valuable part —
+All MIT. All ship XML docs, because the reasoning is the valuable part —
 *why* the frame is fixed rather than a debounce, *why* two counters instead of
 one — and a consumer who cannot see that will reimplement the bug the comment
 exists to prevent.
@@ -107,6 +108,93 @@ unsaved state it cannot trust afterwards. The caller decides.
 loop, because a faulted coalescer loop otherwise means the window silently stops
 refreshing while everything looks fine.
 
+## Janet.DependencyInjection
+
+### The problem
+
+A composition root is a list of registrations kept somewhere other than the
+classes it registers. Adding a service means editing two files, and forgetting
+the second one fails at the first resolve rather than at the build — so the
+error arrives far from the edit that caused it, wearing the name of whoever
+asked for the service.
+
+### The shape
+
+```csharp
+[RegisterDependency<IThumbnailer>(Lifetime = ServiceLifetime.Singleton)]
+class Thumbnailer : IThumbnailer { }
+
+services.AddDependenciesFromAttributes(typeof(Thumbnailer).Assembly);
+```
+
+Call the scan once per assembly that carries the attributes — an application
+whose services live in a library of their own calls it twice.
+
+### One class, several interfaces, one instance
+
+`[RegisterDependency<T>]` is repeatable, and that is how one implementation
+serves several interfaces. The first attribute registers the class; every later
+one registers a descriptor that **forwards** to it. All of them resolve to the
+*same* object, which is the point — registering the implementation once per
+interface gives you one instance each, and the difference only shows up when
+state written through one face fails to appear through another.
+
+Every attribute on a class must name the same lifetime. Registration throws
+rather than pick one, because forwarding descriptors only make sense when all of
+them share an instance.
+
+### `[RegisterFactory<TFactory, TCreates>]`
+
+For the product the container cannot build on its own: when construction means
+composing several registered services into a particular arrangement rather than
+handing them to a constructor. It registers two singletons — the factory as
+`TFactory`, and `TCreates` resolved by calling `Create()` on it. Consumers
+inject the product and never name the factory.
+
+A product type has **exactly one owner**. A second registration of it is a
+contradiction rather than a variant, so it throws: both descriptors would land
+and the container would serve whichever came last, in an order decided by
+`Assembly.GetTypes()` and therefore by nothing the author controls.
+
+`Create` is a compiler-bound call, not a method found by name. The earlier shape
+resolved it reflectively, which meant renaming it compiled cleanly and failed
+only when the container was first asked for the product — and failed outright
+for a factory implementing the interface explicitly, because the method is then
+private and name-mangled.
+
+### `[RegisterHostedService]`
+
+Registers the class additionally as `IHostedService`, forwarding to its primary
+registration so the object the host starts is the object consumers inject rather
+than a second one of the same type.
+
+**The accompanying `[RegisterDependency]` must say `Singleton`, and registration
+throws otherwise.** The host resolves hosted services from the root provider, so
+there is nothing else to forward to: scoped resolves from the root — a captive
+dependency, and a throw under scope validation — and transient would hand the
+host an instance of its own, which is the one thing the forwarding exists to
+prevent. `Lifetime` defaults to `Scoped`, so this is a lifetime you write out:
+
+```csharp
+[RegisterDependency<IPump>(Lifetime = ServiceLifetime.Singleton), RegisterHostedService]
+class Pump : IPump, IHostedService { }
+```
+
+The check is at registration because the alternative is not a check at all.
+Left to run, the mistake surfaces at `Host.StartAsync` — far from the
+declaration that caused it — and with `ValidateScopes` off it surfaces nowhere,
+as a second instance quietly doing the work nobody can see.
+
+### The passes run in an order, and it matters
+
+The scan runs dependencies, then hosted services, then factories. The ordering
+is load-bearing in opposite directions: the hosted-service pass forwards to a
+registration the dependency pass must already have made, while the factory pass
+refuses a product type that any earlier pass registered. Both checks run *while
+registering*, so a declaration that cannot be honoured throws during startup.
+Only the factory's product is built lazily, and by then its declaration has
+already been validated.
+
 ## Testing
 
 `Janet.Shared.Tests` ships a deterministic harness — a `SynchronizationContext`
@@ -118,6 +206,13 @@ var harness = new CoalescerHarness<MyKey>();
 harness.Coalescer.Post(MyKey.Thing, 1);
 harness.Settle();          // pump, advance one frame, pump the drain
 ```
+
+`Janet.DependencyInjection.Fixture` is a separate assembly for one reason:
+`AddDependenciesFromAttributes` scans a whole assembly, so pinning it needs an
+assembly whose every declaration is meant to succeed. The deliberately-broken
+types the unit tests need would be scanned too. The unit tests drive the three
+passes by hand, one type at a time; the fixture is what proves a single scan
+runs them in an order where each pass has what it needs.
 
 ## Building
 

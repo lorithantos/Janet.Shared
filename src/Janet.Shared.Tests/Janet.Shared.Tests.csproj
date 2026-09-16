@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The library depends only on the abstractions; the tests need a real container
+         to prove that two service types resolve to one instance rather than merely that
+         two descriptors were added. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
@@ -20,6 +24,8 @@
     <ProjectReference Include="..\Janet.Coalescing\Janet.Coalescing.csproj" />
     <ProjectReference Include="..\Janet.Wpf\Janet.Wpf.csproj" />
     <ProjectReference Include="..\Janet.Coalescing.Testing\Janet.Coalescing.Testing.csproj" />
+    <ProjectReference Include="..\Janet.DependencyInjection\Janet.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Janet.DependencyInjection.Fixture\Janet.DependencyInjection.Fixture.csproj" />
   </ItemGroup>
 
 </Project>

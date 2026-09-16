@@ -5,6 +5,8 @@
   <Project Path="src/Janet.Coalescing/Janet.Coalescing.csproj" />
   <Project Path="src/Janet.Wpf/Janet.Wpf.csproj" />
   <Project Path="src/Janet.Coalescing.Testing/Janet.Coalescing.Testing.csproj" />
+  <Project Path="src/Janet.DependencyInjection/Janet.DependencyInjection.csproj" />
+  <Project Path="src/Janet.DependencyInjection.Fixture/Janet.DependencyInjection.Fixture.csproj" />
   <Project Path="src/Janet.Shared.Tests/Janet.Shared.Tests.csproj" />
 </Solution>
 
