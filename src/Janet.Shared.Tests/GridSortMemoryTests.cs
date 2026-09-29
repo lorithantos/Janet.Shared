@@ -18,11 +18,15 @@ using Xunit;
 [Collection(WpfCollection.Name)]
 public sealed class GridSortMemoryTests
 {
+    private readonly JanetWpfFixture wpf;
+
+    public GridSortMemoryTests(JanetWpfFixture wpf) => this.wpf = wpf;
+
     /// <summary>The whole point: sort, swap the list, still sorted.</summary>
     [Fact]
     public void AUserSortSurvivesTheListBeingReplaced()
     {
-        var after = Sta.Run(() =>
+        var after = this.wpf.Run(() =>
         {
             var (grid, holder) = Bound(remember: true);
 
@@ -45,7 +49,7 @@ public sealed class GridSortMemoryTests
     [Fact]
     public void TheHeaderArrowIsRestoredWithTheSort()
     {
-        var direction = Sta.Run(() =>
+        var direction = this.wpf.Run(() =>
         {
             var (grid, holder) = Bound(remember: true);
 
@@ -66,7 +70,7 @@ public sealed class GridSortMemoryTests
     [Fact]
     public void ADefaultOrderIsLeftAloneUntilTheUserSorts()
     {
-        var after = Sta.Run(() =>
+        var after = this.wpf.Run(() =>
         {
             var (grid, holder) = Bound(remember: true);
             holder.Rows = [new Row("c"), new Row("a")];
@@ -85,7 +89,7 @@ public sealed class GridSortMemoryTests
     [Fact]
     public void WithoutTheAttachedPropertyTheSortIsLost()
     {
-        var after = Sta.Run(() =>
+        var after = this.wpf.Run(() =>
         {
             var (grid, holder) = Bound(remember: false);
 
@@ -107,7 +111,7 @@ public sealed class GridSortMemoryTests
     [Fact]
     public void WithoutNotifyOnTargetUpdatedTheBehaviourIsInert()
     {
-        var after = Sta.Run(() =>
+        var after = this.wpf.Run(() =>
         {
             var (grid, holder) = Bound(remember: true, notify: false);
 
@@ -124,7 +128,7 @@ public sealed class GridSortMemoryTests
     [Fact]
     public void TheMostRecentUserSortIsTheOneRemembered()
     {
-        var after = Sta.Run(() =>
+        var after = this.wpf.Run(() =>
         {
             var (grid, holder) = Bound(remember: true);
 

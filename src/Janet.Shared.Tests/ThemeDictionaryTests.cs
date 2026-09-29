@@ -24,6 +24,10 @@ public sealed class ThemeDictionaryTests
 {
     private const string Package = "pack://application:,,,/Janet.Wpf;component/Themes/";
 
+    private readonly JanetWpfFixture wpf;
+
+    public ThemeDictionaryTests(JanetWpfFixture wpf) => this.wpf = wpf;
+
     [Theory]
     [InlineData("Primitives.Light.xaml")]
     [InlineData("Primitives.Dark.xaml")]
@@ -35,7 +39,7 @@ public sealed class ThemeDictionaryTests
         // Loading is the assertion. A StaticResource that cannot resolve throws
         // HERE — at BAML load — which in a real app means a window that never
         // appears rather than a build that fails.
-        var dictionary = Sta.Run(() => new ResourceDictionary { Source = new Uri(Package + file) });
+        var dictionary = this.wpf.Run(() => new ResourceDictionary { Source = new Uri(Package + file) });
 
         Assert.NotEmpty(dictionary.Keys.Cast<object>());
     }
@@ -48,7 +52,7 @@ public sealed class ThemeDictionaryTests
     [Fact]
     public void TheTwoSkinsDefineTheSameKeys()
     {
-        var (light, dark) = Sta.Run(() => (KeysOf("Semantic.Light.xaml"), KeysOf("Semantic.Dark.xaml")));
+        var (light, dark) = this.wpf.Run(() => (KeysOf("Semantic.Light.xaml"), KeysOf("Semantic.Dark.xaml")));
 
         Assert.Equal([.. light.Order()], [.. dark.Order()]);
     }
@@ -64,7 +68,7 @@ public sealed class ThemeDictionaryTests
     [InlineData("Dark")]
     public void QuietDataGridTakesItsColoursFromTheActiveSkin(string skin)
     {
-        var (foreground, expected) = Sta.Run(() =>
+        var (foreground, expected) = this.wpf.Run(() =>
         {
             UseTheme(skin);
 
@@ -97,7 +101,7 @@ public sealed class ThemeDictionaryTests
     [Fact]
     public void QuietDataGridCentresCellContentInATallRow()
     {
-        var (textTop, rowHeight) = Sta.Run(() =>
+        var (textTop, rowHeight) = this.wpf.Run(() =>
         {
             UseTheme("Light");
 

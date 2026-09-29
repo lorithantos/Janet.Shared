@@ -15,6 +15,10 @@ using Xunit;
 [Collection(WpfCollection.Name)]
 public sealed class ThemeServiceTests
 {
+    private readonly JanetWpfFixture wpf;
+
+    public ThemeServiceTests(JanetWpfFixture wpf) => this.wpf = wpf;
+
     /// <summary>
     /// Swapping the skin replaces slot 0 and leaves everything the app merged
     /// behind it alone — it does not append a second skin, and it does not take
@@ -28,7 +32,7 @@ public sealed class ThemeServiceTests
     [Fact]
     public void SwappingTheSkinReplacesSlotZeroAndSparesWhatIsBehindIt()
     {
-        Sta.Run(() =>
+        this.wpf.Run(() =>
         {
             Restore(() =>
             {
@@ -59,7 +63,7 @@ public sealed class ThemeServiceTests
     [Fact]
     public void ASkinCanBeAppliedWhenNothingHasBeenMergedYet()
     {
-        Sta.Run(() =>
+        this.wpf.Run(() =>
         {
             Restore(() =>
             {
@@ -77,7 +81,7 @@ public sealed class ThemeServiceTests
     [Fact]
     public void TogglingAlternatesBetweenTheTwoSkins()
     {
-        Sta.Run(() =>
+        this.wpf.Run(() =>
         {
             Restore(() =>
             {
@@ -100,7 +104,7 @@ public sealed class ThemeServiceTests
     [Fact]
     public void TheSkinsResolveToDifferentColours()
     {
-        var (light, dark) = Sta.Run(() => Restore(() =>
+        var (light, dark) = this.wpf.Run(() => Restore(() =>
         {
             ThemeService.ApplySkin(ThemeService.Light);
             var inLight = Application.Current.FindResource("SurfaceBrush").ToString();
@@ -119,7 +123,7 @@ public sealed class ThemeServiceTests
     [Fact]
     public void SupplyingAResolverReappliesTheCurrentSkinThroughIt()
     {
-        var asked = Sta.Run(() => Restore(() =>
+        var asked = this.wpf.Run(() => Restore(() =>
         {
             var seen = new List<string>();
 
@@ -139,7 +143,7 @@ public sealed class ThemeServiceTests
 
     [Fact]
     public void AnEmptySkinNameIsRefused() =>
-        Sta.Run(() => Assert.Throws<ArgumentException>(() => ThemeService.ApplySkin("  ")));
+        this.wpf.Run(() => Assert.Throws<ArgumentException>(() => ThemeService.ApplySkin("  ")));
 
     // ---- housekeeping -------------------------------------------------------
 

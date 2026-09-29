@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Janet.Coalescing\Janet.Coalescing.csproj" />
     <ProjectReference Include="..\Janet.Wpf\Janet.Wpf.csproj" />
+    <ProjectReference Include="..\Janet.Wpf.Testing\Janet.Wpf.Testing.csproj" />
     <ProjectReference Include="..\Janet.Coalescing.Testing\Janet.Coalescing.Testing.csproj" />
     <ProjectReference Include="..\Janet.DependencyInjection\Janet.DependencyInjection.csproj" />
     <ProjectReference Include="..\Janet.DependencyInjection.Fixture\Janet.DependencyInjection.Fixture.csproj" />

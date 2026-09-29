@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <PackageId>Janet.Wpf.Testing</PackageId>
+    <Description>
+      Turns WPF's silent binding failures into test failures. Realises a
+      DataTemplate against a view model, pumps the dispatcher, and fails on
+      anything WPF traced while doing it — a binding to a property that does not
+      exist throws nothing, builds green, and leaves an empty control.
+    </Description>
+    <PackageTags>wpf;testing;databinding;xunit;desktop</PackageTags>
+  </PropertyGroup>
+
+  <!-- No reference to Janet.Wpf, and no test framework. The harness is plain WPF,
+       so it works against any app and under any runner; the [CollectionDefinition]
+       that serialises it has to live in the consuming test assembly anyway, because
+       xUnit only discovers collection definitions in the assembly under test. -->
+
+</Project>
