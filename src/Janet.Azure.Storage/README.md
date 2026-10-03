@@ -41,3 +41,16 @@ BlobContent photo = await container.ReadContentAsync("images/Principals%20seated
   returns false rather than throwing.
 - **`ReadContentAsync` returns the bytes with the type they were stored with,** so an image comes
   back as an image and JSON as JSON.
+
+## JSON documents
+
+```csharp
+bool created = await container.TryCreateJsonAsync("look/20261003.json", look, options, metadata);
+Look look = await container.ReadJsonAsync<Look>("look/20261003.json", options);
+```
+
+- The same create-only write, with the value serialized and stored as
+  `application/json; charset=utf-8` (`BlobContent.JsonContentType`).
+- A document that is JSON `null` throws `InvalidDataException` rather than reading as nothing.
+- The conversion itself is on `BlobContent` (`BlobContent.FromJson`, `content.ReadJson<T>`), so a
+  storage abstraction of your own that deals in `BlobContent` gets the same JSON handling.

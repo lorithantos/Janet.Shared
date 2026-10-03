@@ -47,6 +47,39 @@ public class BlobContainerExtensionsTests
         Assert.Equal("image/png", content.ContentType);
     }
 
+    private sealed record Look(string AccentColour, int Version);
+
+    private static readonly System.Text.Json.JsonSerializerOptions CamelCase =
+        new() { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase };
+
+    [Fact]
+    public async Task A_json_document_is_created_only_if_absent_and_typed_as_json()
+    {
+        var blob = new RecordingBlob();
+
+        Assert.True(await new FakeContainer(blob).TryCreateJsonAsync("look.json", new Look("#997c61", 2), CamelCase));
+        Assert.Equal(ETag.All, blob.Options!.Conditions.IfNoneMatch);
+        Assert.Equal(BlobContent.JsonContentType, blob.Options.HttpHeaders.ContentType);
+        Assert.Equal("""{"accentColour":"#997c61","version":2}""", blob.Uploaded!.ToString());
+    }
+
+    [Fact]
+    public async Task A_json_document_reads_back_as_the_value_written()
+    {
+        var written = BlobContent.FromJson(new Look("#225E3E", 2), CamelCase);
+        var blob = new RecordingBlob { Stored = written.Content, StoredType = written.ContentType };
+
+        Assert.Equal(new Look("#225E3E", 2), await new FakeContainer(blob).ReadJsonAsync<Look>("look.json", CamelCase));
+    }
+
+    [Fact]
+    public void A_json_null_document_is_refused_rather_than_read_as_nothing()
+    {
+        var content = new BlobContent(BinaryData.FromString("null"), BlobContent.JsonContentType);
+
+        Assert.Throws<System.IO.InvalidDataException>(() => content.ReadJson<Look>());
+    }
+
     private sealed class FakeContainer(BlobClient blob) : BlobContainerClient
     {
         public override BlobClient GetBlobClient(string blobName) => blob;
