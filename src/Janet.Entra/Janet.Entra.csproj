@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>Janet.Entra</PackageId>
+    <Description>
+      Reads who a request is from out of an Entra ID sign-in: object ID, tenant, security
+      groups and app roles, under either claim spelling the Microsoft stacks use. It fails
+      closed: a principal that is not signed in, has no object ID, or carries a group
+      overage pointer instead of its groups gives no user, with the reason, rather than a
+      partial reading an access check could be wrong about.
+    </Description>
+    <PackageTags>entra;azure-ad;identity;claims;authorization;app-roles;groups</PackageTags>
+  </PropertyGroup>
+
+</Project>

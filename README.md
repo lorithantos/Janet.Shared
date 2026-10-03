@@ -1,12 +1,14 @@
 # Janet.Shared
 
-Three small libraries extracted from apps that had already built them twice.
+Small libraries extracted from apps that had already built them twice, or were about to.
 
 | Package | What |
 |---|---|
 | **Janet.Coalescing** | Collapse bursts of change notifications into output passes at a bounded cadence, plus lazy derived cells that compute only when read. No UI dependency. |
 | **Janet.Wpf** | Three-layer theming with runtime skin swapping, a DataGrid that remembers the user's sort, crash logging, and the startup hardening that stops WPF exiting silently. |
 | **Janet.DependencyInjection** | Declare registration on the class itself: what to register, as what, with which lifetime. One assembly scan turns the attributes into descriptors, and a declaration that cannot be honoured throws at startup. |
+| **Janet.Azure.Storage** | Blob, table and queue clients built from a credential the app chooses, with retry budgets tighter than the SDK's, and no way in for a key or a SAS token. |
+| **Janet.Entra** | Reads who a request is from out of an Entra ID sign-in (object ID, tenant, groups, app roles) and fails closed when the sign-in does not say enough. |
 
 All MIT. All ship XML docs, because the reasoning is the valuable part —
 *why* the frame is fixed rather than a debounce, *why* two counters instead of
@@ -194,6 +196,26 @@ refuses a product type that any earlier pass registered. Both checks run *while
 registering*, so a declaration that cannot be honoured throws during startup.
 Only the factory's product is built lazily, and by then its declaration has
 already been validated.
+
+## Janet.Azure.Storage
+
+ImageSelector and the Neelam campaign tool each built their storage clients by hand, and
+only one of them gave the clients a retry budget: the other ran on the SDK's 100-second
+per-attempt timeout. `StorageClients` builds them once, from the endpoints and the
+`TokenCredential` the app passes in, applying `StorageRetryOptions`, and checks every
+endpoint is plain https with no query string, so a SAS token has nowhere to travel.
+
+It never chooses the credential. One app allows a developer's Visual Studio sign-in and
+another forbids it; one pins a tenant, another does not. That is each app's policy, so it
+stays in the app. See `src/Janet.Azure.Storage/README.md`.
+
+## Janet.Entra
+
+`EntraClaims.Read(principal)` gives an `EntraUser` (object ID, tenant, groups, app roles) or
+the reason there is none. Both claim spellings the Microsoft stacks use are read, and a
+group overage, where the token points at Graph instead of listing groups, gives no user
+rather than a partial list. What a group or role *means* is the app's business; this only
+says what the sign-in states. See `src/Janet.Entra/README.md`.
 
 ## Testing
 

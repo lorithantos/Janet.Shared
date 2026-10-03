@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>Janet.Azure.Storage</PackageId>
+    <Description>
+      Azure Storage service clients built from a credential the caller chooses, with
+      retry budgets tighter than the SDK defaults and an address check that refuses
+      anything but a plain https endpoint, so a SAS token cannot ride in on a URI.
+      It never picks a credential: which identity an app uses is that app's decision.
+    </Description>
+    <PackageTags>azure;storage;blob;table;queue;entra;managed-identity;retry</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.13.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.30.0" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.28.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The options each client was built with are internal: the tests read them to pin that the
+         clients carry the caller's budget, which the SDK clients themselves do not expose. -->
+    <InternalsVisibleTo Include="Janet.Shared.Tests" />
+  </ItemGroup>
+
+</Project>
