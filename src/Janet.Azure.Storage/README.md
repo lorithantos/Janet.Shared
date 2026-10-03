@@ -26,3 +26,18 @@ TableClient table = clients.Tables.GetTableClient("clients");
   settable, so it binds from configuration.
 - A service left out of `StorageEndpoints` has no client; asking for it throws rather than
   guessing an address. Each client is built once, on first use.
+
+## Binary reads and writes
+
+```csharp
+var container = clients.Blobs.GetBlobContainerClient("neelam-aesthetics");
+
+bool created = await container.TryCreateAsync("images/Principals%20seated", bytes, "image/png", metadata);
+BlobContent photo = await container.ReadContentAsync("images/Principals%20seated");   // bytes + type
+```
+
+- **`TryCreateAsync` creates, never overwrites.** The upload carries `If-None-Match: *`, so the
+  service refuses it when the name is taken, even against a writer racing for the same name; it
+  returns false rather than throwing.
+- **`ReadContentAsync` returns the bytes with the type they were stored with,** so an image comes
+  back as an image and JSON as JSON.
