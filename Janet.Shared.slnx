@@ -10,6 +10,7 @@
   <Project Path="src/Janet.DependencyInjection.Fixture/Janet.DependencyInjection.Fixture.csproj" />
   <Project Path="src/Janet.Azure.Storage/Janet.Azure.Storage.csproj" />
   <Project Path="src/Janet.Entra/Janet.Entra.csproj" />
+  <Project Path="src/Janet.Mcp.Security/Janet.Mcp.Security.csproj" />
   <Project Path="src/Janet.Shared.Tests/Janet.Shared.Tests.csproj" />
 </Solution>
 

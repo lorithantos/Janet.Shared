@@ -29,6 +29,7 @@
     <ProjectReference Include="..\Janet.DependencyInjection.Fixture\Janet.DependencyInjection.Fixture.csproj" />
     <ProjectReference Include="..\Janet.Azure.Storage\Janet.Azure.Storage.csproj" />
     <ProjectReference Include="..\Janet.Entra\Janet.Entra.csproj" />
+    <ProjectReference Include="..\Janet.Mcp.Security\Janet.Mcp.Security.csproj" />
   </ItemGroup>
 
 </Project>

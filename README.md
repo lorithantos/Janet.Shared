@@ -9,6 +9,7 @@ Small libraries extracted from apps that had already built them twice, or were a
 | **Janet.DependencyInjection** | Declare registration on the class itself: what to register, as what, with which lifetime. One assembly scan turns the attributes into descriptors, and a declaration that cannot be honoured throws at startup. |
 | **Janet.Azure.Storage** | Blob, table and queue clients built from a credential the app chooses, with retry budgets tighter than the SDK's, and no way in for a key or a SAS token. |
 | **Janet.Entra** | Reads who a request is from out of an Entra ID sign-in (object ID, tenant, groups, app roles) and fails closed when the sign-in does not say enough. |
+| **Janet.Mcp.Security** | For a local MCP server over HTTP: a loopback guard against DNS rebinding and cross-site requests, a per-machine bearer token kept under DPAPI in the registry, and bearer authentication with a Report mode that counts before Require refuses. Windows only for the token. See `src/Janet.Mcp.Security/README.md`. |
 
 All MIT. All ship XML docs, because the reasoning is the valuable part —
 *why* the frame is fixed rather than a debounce, *why* two counters instead of

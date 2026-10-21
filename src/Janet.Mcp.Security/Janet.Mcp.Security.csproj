@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>Janet.Mcp.Security</PackageId>
+    <Description>
+      Front-door security for a local MCP server over HTTP: a loopback guard that refuses a
+      forged Host (400), a cross-site Origin (403) and a non-JSON POST (415) before anything
+      else runs, a per-machine bearer token kept in the registry under DPAPI for the current
+      Windows user, and bearer authentication with a Report mode that counts outcomes before
+      a Require mode refuses anything.
+    </Description>
+    <PackageTags>mcp;security;loopback;dns-rebinding;bearer;dpapi;aspnetcore</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The guard and the bearer check are middleware, so the package needs the ASP.NET Core
+         shared framework. Both consuming servers already reference it. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>
