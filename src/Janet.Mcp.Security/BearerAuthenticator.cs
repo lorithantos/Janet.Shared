@@ -109,11 +109,16 @@ public sealed class BearerAuthenticator : IDisposable
     /// </summary>
     public static readonly PathString ExemptPath = new("/health");
 
-    private const string HeaderHint =
-        "Run `janet mcp-headers` to print the header to send.";
+    /// <summary>
+    /// The sentence that ends every 401 when the server supplies no hint of its own. It names no
+    /// tool: this library does not know how a given server's clients get their token.
+    /// </summary>
+    public const string DefaultHeaderHint =
+        "Send the token this server is configured with.";
 
     private readonly Func<string?> provider;
     private readonly TimeProvider time;
+    private readonly string headerHint;
 
     private readonly Channel<TaskCompletionSource<Expected>> refreshes =
         Channel.CreateUnbounded<TaskCompletionSource<Expected>>(
@@ -143,7 +148,18 @@ public sealed class BearerAuthenticator : IDisposable
     /// call at a time.
     /// </param>
     /// <param name="timeProvider">The clock the refresh throttle runs on; the system clock when null.</param>
-    public BearerAuthenticator(BearerMode mode, Func<string?> tokenProvider, TimeProvider? timeProvider = null)
+    /// <param name="headerHint">
+    /// The sentence that ends every 401, telling a client where to get the header to send -- for
+    /// example the command that prints it. <see cref="DefaultHeaderHint"/> when null. In the
+    /// no-token refusal it follows "Once the server has its token, ", so its first letter is
+    /// lowercased there. It must name no token: it is sent to anyone refused.
+    /// </param>
+    /// <exception cref="ArgumentException">When <paramref name="headerHint"/> is empty or whitespace.</exception>
+    public BearerAuthenticator(
+        BearerMode mode,
+        Func<string?> tokenProvider,
+        TimeProvider? timeProvider = null,
+        string? headerHint = null)
     {
         if (!Enum.IsDefined(mode))
         {
@@ -151,9 +167,15 @@ public sealed class BearerAuthenticator : IDisposable
         }
 
         ArgumentNullException.ThrowIfNull(tokenProvider);
+        if (headerHint is not null && string.IsNullOrWhiteSpace(headerHint))
+        {
+            throw new ArgumentException("A header hint is a sentence; pass null for the default.", nameof(headerHint));
+        }
+
         Mode = mode;
         provider = tokenProvider;
         time = timeProvider ?? TimeProvider.System;
+        this.headerHint = headerHint?.Trim() ?? DefaultHeaderHint;
 
         if (mode == BearerMode.Off)
         {
@@ -226,18 +248,18 @@ public sealed class BearerAuthenticator : IDisposable
     {
         BearerOutcome.Missing =>
             "Refused: this server requires a bearer token (Authorization: Bearer <token>) and the " +
-            "request carried no Authorization header. " + HeaderHint,
+            "request carried no Authorization header. " + headerHint,
         BearerOutcome.Wrong =>
             "Refused: this server requires a bearer token (Authorization: Bearer <token>), and the " +
             "Authorization header sent is not it -- another scheme, or a token that is not current " +
-            "(it may have been rotated). " + HeaderHint,
+            "(it may have been rotated). " + headerHint,
         BearerOutcome.Unconfigured =>
             "Refused: this server requires a bearer token but has no token configured, so it can " +
             "accept no request." +
             (Volatile.Read(ref expected).Error is null
                 ? string.Empty
                 : " Reading the token failed; GET /health says why.") +
-            " Once the server has its token, " + char.ToLowerInvariant(HeaderHint[0]) + HeaderHint[1..],
+            " Once the server has its token, " + char.ToLowerInvariant(headerHint[0]) + headerHint[1..],
         _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "Ok is not refused."),
     };
 

@@ -36,9 +36,9 @@ public sealed class BearerAuthenticatorTests : IDisposable
         }
     }
 
-    private BearerAuthenticator Create(BearerMode mode = BearerMode.Require)
+    private BearerAuthenticator Create(BearerMode mode = BearerMode.Require, string? headerHint = null)
     {
-        BearerAuthenticator bearer = new(mode, Provide, clock);
+        BearerAuthenticator bearer = new(mode, Provide, clock, headerHint);
         created.Add(bearer);
         return bearer;
     }
@@ -149,8 +149,41 @@ public sealed class BearerAuthenticatorTests : IDisposable
         Assert.DoesNotContain(Rotated, json);
         Assert.DoesNotContain(Token, bodies);
         Assert.DoesNotContain("resource_metadata", bodies);
-        Assert.Contains("janet mcp-headers", bodies);
     }
+
+    private static string[] Refusals(BearerAuthenticator bearer) =>
+        new[] { BearerOutcome.Missing, BearerOutcome.Wrong, BearerOutcome.Unconfigured }
+            .Select(bearer.RefusalMessage)
+            .ToArray();
+
+    [Fact]
+    public void With_no_hint_every_refusal_ends_with_a_sentence_naming_no_tool()
+    {
+        string[] bodies = Refusals(Create());
+
+        Assert.All(bodies, body => Assert.EndsWith("send the token this server is configured with.", body, StringComparison.OrdinalIgnoreCase));
+        Assert.All(bodies, body => Assert.DoesNotContain("janet", body, StringComparison.OrdinalIgnoreCase));
+        Assert.All(bodies, body => Assert.DoesNotContain("`", body));
+        Assert.Equal("Send the token this server is configured with.", BearerAuthenticator.DefaultHeaderHint);
+    }
+
+    [Fact]
+    public void A_supplied_hint_ends_every_refusal_in_place_of_the_default()
+    {
+        const string Hint = "Run `example-tool headers` to print the header to send.";
+        string[] bodies = Refusals(Create(headerHint: "  " + Hint + "\n"));
+
+        Assert.EndsWith(" " + Hint, bodies[0]);
+        Assert.EndsWith(" " + Hint, bodies[1]);
+        Assert.EndsWith(" Once the server has its token, run `example-tool headers` to print the header to send.", bodies[2]);
+        Assert.All(bodies, body => Assert.DoesNotContain(BearerAuthenticator.DefaultHeaderHint, body, StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void An_empty_hint_is_refused_rather_than_sent(string hint) =>
+        Assert.Throws<ArgumentException>("headerHint", () => new BearerAuthenticator(BearerMode.Off, Provide, clock, hint));
 
     [Fact]
     public async Task A_rotated_token_is_picked_up_once_the_throttle_allows_a_re_read()

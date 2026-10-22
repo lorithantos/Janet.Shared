@@ -38,9 +38,9 @@ public sealed class McpSecurityPipelineTests : IAsyncDisposable
         bearer?.Dispose();
     }
 
-    private async Task StartAsync(BearerMode mode, string? token = Token)
+    private async Task StartAsync(BearerMode mode, string? token = Token, string? headerHint = null)
     {
-        bearer = new BearerAuthenticator(mode, () => token, new FakeTime());
+        bearer = new BearerAuthenticator(mode, () => token, new FakeTime(), headerHint);
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Logging.ClearProviders();
@@ -72,7 +72,8 @@ public sealed class McpSecurityPipelineTests : IAsyncDisposable
     [Fact]
     public async Task Require_refuses_a_request_with_no_token_with_a_plain_text_401()
     {
-        await StartAsync(BearerMode.Require);
+        const string Hint = "Run `example-tool headers` to print the header to send.";
+        await StartAsync(BearerMode.Require, headerHint: Hint);
 
         using HttpResponseMessage response = await GetAsync("");
         string body = await response.Content.ReadAsStringAsync();
@@ -82,7 +83,21 @@ public sealed class McpSecurityPipelineTests : IAsyncDisposable
         Assert.Equal("nosniff", Assert.Single(response.Headers.GetValues("X-Content-Type-Options")));
         Assert.Empty(response.Headers.WwwAuthenticate);
         Assert.StartsWith("Refused: this server requires a bearer token", body);
-        Assert.Contains("janet mcp-headers", body);
+        Assert.EndsWith(" " + Hint, body.TrimEnd());
+    }
+
+    [Fact]
+    public async Task With_no_hint_the_401_names_no_tool()
+    {
+        await StartAsync(BearerMode.Require);
+
+        using HttpResponseMessage response = await GetAsync("");
+        string body = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.EndsWith(" Send the token this server is configured with.", body.TrimEnd());
+        Assert.DoesNotContain("janet", body, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("`", body);
     }
 
     [Fact]

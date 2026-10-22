@@ -11,7 +11,7 @@
   <!-- Package identity, shared by every shippable project here. Test projects
        opt out with IsPackable=false. -->
   <PropertyGroup>
-    <Version>0.7.0</Version>
+    <Version>0.8.0</Version>
     <Authors>Lori Thantos</Authors>
     <Company>Lori Thantos</Company>
     <Copyright>Copyright (c) Lori Thantos</Copyright>

@@ -50,6 +50,9 @@ app.MapGet("/health", () => new { ..., auth = bearer.Snapshot() });
   a single-reader channel: every request waiting is answered by one provider call, and nothing
   elects who refreshes. Dispose the authenticator when the server stops; requests still waiting
   then fail with `ObjectDisposedException` instead of hanging.
-- The 401 is plain text and says `janet mcp-headers` prints the header. It sends no
-  `WWW-Authenticate`: MCP clients answer a 401 by looking for OAuth, and there is none here.
+- The 401 is plain text and ends with a hint saying where to get the header. The server
+  supplies it as the constructor's `headerHint` (for example
+  ``"Run `my-tool headers` to print the header to send."``); without one it is
+  `BearerAuthenticator.DefaultHeaderHint`, a sentence that names no tool. It sends no `WWW-Authenticate`: MCP clients answer a 401 by looking for OAuth, and
+  there is none here.
 - No token, expected or received, is logged, echoed or put in the snapshot.
